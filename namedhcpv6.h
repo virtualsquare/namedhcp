@@ -1,0 +1,44 @@
+#ifndef NAMEDHCPV6_H
+#define NAMEDHCPV6_H
+
+#define   DHCP_CLIENTPORT   546
+#define   DHCP_SERVERPORT   547
+
+#define   DHCP_SOLICIT  1
+#define   DHCP_ADVERTISE  2
+#define   DHCP_REQUEST  3
+#define   DHCP_CONFIRM  4
+#define   DHCP_RENEW  5
+#define   DHCP_REBIND   6
+#define   DHCP_REPLY  7
+#define   DHCP_RELEASE  8
+#define   DHCP_DECLINE  9
+#define   DHCP_RECONFIGURE  10
+
+#define   OPTION_CLIENTID   1
+#define   OPTION_SERVERID   2
+#define   OPTION_IA_NA  3
+#define   OPTION_IA_TA  4
+#define   OPTION_IAADDR  5
+#define   OPTION_ORO  6
+#define   OPTION_PREFERENCE   7
+#define   OPTION_ELAPSED_TIME   8
+#define   OPTION_RELAY_MSG  9
+#define   OPTION_AUTH   11
+#define   OPTION_UNICAST  12
+#define   OPTION_STATUS_CODE  13
+#define   OPTION_RAPID_COMMIT   14
+#define   OPTION_USER_CLASS   15
+#define   OPTION_VENDOR_CLASS   16
+#define   OPTION_VENDOR_OPTS  17
+#define   OPTION_INTERFACE_ID   18
+#define   OPTION_RECONF_MSG   19
+#define   OPTION_RECONF_ACCEPT  20
+#define   OPTION_DNS_SERVERS  23
+#define   OPTION_DOMAIN_LIST  24
+#define   OPTION_IAPREFIX   26
+#define   OPTION_SNTP_SERVERS   31
+#define   OPTION_CLIENT_FQDN  39
+#define   DHCPV6_OPTIONS 40
+
+#endif
