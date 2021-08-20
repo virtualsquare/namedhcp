@@ -64,7 +64,6 @@ struct udpv6_pkt {
 
 static int verbose;
 static char *cwd;
-static char *pidfile;
 static int leave;
 static pid_t mypid;
 
@@ -664,7 +663,7 @@ int main(int argc, char *argv[])
 			case '?':
 			case 'h': usage(progname); break;
 			default: {
-								 int index = argindex(c);;
+								 int index = argindex(c);
 								 if (args.argv[index] == NULL)
 									 args.argv[index] = optarg ? optarg : "";
 							 }
@@ -686,7 +685,7 @@ int main(int argc, char *argv[])
 	setsignals();
 	/* saves current path in cwd, because otherwise with daemon() we
 	 * forget it */
-	if((cwd = getcwd(NULL, PATH_MAX)) == NULL) {
+	if((cwd = getcwd(NULL, 0)) == NULL) {
 		printlog(LOG_ERR, "getcwd: %s", strerror(errno));
 		exit(1);
 	}
@@ -697,7 +696,7 @@ int main(int argc, char *argv[])
 
 	/* once here, we're sure we're the true process which will continue as a
 	 * server: save PID file if needed */
-	if(pidfile) save_pidfile(pidfile, cwd);
+	if(args.pidfile) save_pidfile(args.pidfile, cwd);
 
 	struct ioth *dnsstack = NULL;
 	if (args.dnsstack) {
