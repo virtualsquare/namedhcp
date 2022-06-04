@@ -98,7 +98,7 @@ static void setsignals(void) {
 }
 
 static inline int macaddr_isnull(void) {
-	const uint8_t nullmac[ETH_ALEN];
+	static const uint8_t nullmac[ETH_ALEN] = {0};
 	return memcmp(macaddr, nullmac, ETH_ALEN) == 0;
 }
 
@@ -787,4 +787,3 @@ int main(int argc, char *argv[])
 		}
 	}
 }
-
