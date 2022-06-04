@@ -254,7 +254,7 @@ static void parseopts(FILE *f, long *pos, int npos) {
 		if (opt_type < npos)
 			pos[opt_type] = ftell(f);
 		uint16_t opt_len = fget_uint16(f);
-		printf("opt %d\n", opt_type);
+		// printf("opt %d\n", opt_type);
 		fseek(f, opt_len, SEEK_CUR);
 	}
 }
@@ -280,7 +280,7 @@ ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, struct iothdns *iothdns) {
 		/* uint8_t fqdn_flags = */ fget_uint8(fin); // unused
 		fget_name(fin, fqdn, fqdn_len);
 		struct in6_addr ipv6addr[1];
-		printf("%d %s \n", fqdn_len, fqdn);
+		// printf("%d %s \n", fqdn_len, fqdn);
 		switch (dhcp_type) {
 			case DHCP_SOLICIT:
 				if (iothdns_lookup_aaaa(iothdns, fqdn, ipv6addr, 1) > 0) {

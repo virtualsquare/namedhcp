@@ -217,7 +217,7 @@ static void parseopts(FILE *f, long *fpos) {
 			break;
 		fpos[opt_type] = ftell(f);
 		uint8_t opt_len = fget_uint8(f);
-		printf("opt %d\n", opt_type);
+		// printf("opt %d\n", opt_type);
 		fseek(f, opt_len, SEEK_CUR);
 	}
 }
@@ -257,7 +257,7 @@ static int get_txtopts_cb(int section, struct iothdns_rr *rr, struct iothdns_pkt
 			char *args[tagc];
 			stropt(txt, tags, args, buf);
 			for (int i=0; i<tagc; i++) {
-				printf("%s = %s\n",tags[i], args[i]);
+				// printf("%s = %s\n",tags[i], args[i]);
 				if (args[i] != NULL) {
 					switch (strcase(tags[i])) {
 						case STRCASE(m,a,s,k):
