@@ -72,6 +72,10 @@ static int leave;
 static pid_t mypid;
 
 uint8_t macaddr[ETH_ALEN];
+static inline int macaddr_isnull(void) {
+	static const uint8_t nullmac[ETH_ALEN] = {0};
+	return memcmp(macaddr, nullmac, ETH_ALEN) == 0;
+}
 
 #ifndef _GNU_SOURCE
 static inline char *strchrnul(const char *s, int c) {
@@ -95,11 +99,6 @@ static void setsignals(void) {
 	};
 	sigaction(SIGINT, &action, NULL);
 	sigaction(SIGTERM, &action, NULL);
-}
-
-static inline int macaddr_isnull(void) {
-	static const uint8_t nullmac[ETH_ALEN] = {0};
-	return memcmp(macaddr, nullmac, ETH_ALEN) == 0;
 }
 
 static int copy_option(FILE *fin, FILE *fout, uint8_t opt_type, long *finpos) {
@@ -136,6 +135,7 @@ static int cmp_option(FILE *f1, long pos1, FILE *f2, long pos2) {
 	return retval;
 }
 
+/* backpatch option len */
 static void set_optlen(FILE *f, long lenpos) {
 	long endpos = ftell(f);
 	fseek(f, lenpos, SEEK_SET);
@@ -298,6 +298,7 @@ static FILE *get_txtopts(struct iothdns *iothdns, const char *fqdn) {
 // parse and process a dhcp query
 static const uint8_t dhcp_cookie[] = {0x63,0x82,0x53,0x63};
 ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, void *clientip, struct iothdns *iothdns) {
+	/* -------------- parse the incoming dhcp request from fin -------------- */
 	uint8_t cookie_ck[4];
 	long finpos[UINT8_MAX] = {0};
 	static long foptpos[UINT8_MAX] = {0};
@@ -327,6 +328,7 @@ ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, void *clientip, struct ioth
 		else
 			fget_data(fin, fqdn, fqdn_len - 1); // ASCII deprecated encoding
 		//printf("fqdn %s\n", fqdn);
+		/* -------------- compose the dhcp reply to fout -------------- */
 		switch (dhcp_type) {
 			case DHCPDISCOVER:
 				if (iothdns_lookup_a(iothdns, fqdn, clientip, 1) > 0) {
@@ -481,8 +483,8 @@ static ssize_t packet_process(
 		return 0;
 	struct bootp_pkt *inpkt = (void *) inbuf;
 	struct bootp_pkt *outpkt = (void *) outbuf;
-	*outpkt = *inpkt;
 	if (! ch_inpkt(inpkt)) return 0;
+	*outpkt = *inpkt; // copy the headers
 #ifdef PACKETDUMP
 	if (verbose) {
 		fprintf(stderr, "INPACKET %zd\n",inlen);
@@ -548,7 +550,7 @@ void usage(char *progname)
 {
 	fprintf(stderr,"Usage: %s OPTIONS\n"
 			"\t--stack|-s <ioth_stack_conf> or VNL\n"
-			"\t           (it uses a udpv6 emulation if this is a VDE VNL)\n"
+			"\t           (it uses a udp emulation if this is a VDE VNL)\n"
 			"\t--dnsstack|-R <resolver_ioth_stack_conf>)\n"
 			"\t           (default: kernel stack if the --stack is a VNL, the same of --stack otherwise)\n"
 			"\t--rcfile|-f <conffile>\n"
@@ -588,7 +590,7 @@ static struct option long_options[] = {
 };
 
 static char *arg_tags = "dvpsRinrmDNSI";
-union {
+static union {
 	struct {
 		char *daemon;
 		char *verbose;
@@ -625,6 +627,9 @@ int parsercfile(char *path, struct option *options) {
 		char optname[len], value[len];
 		// parse the line
 		*value = 0;
+		/* optname <- the first alphanumeric field (%[a-zA-Z0-9])
+			 value <- the remaining of the line not including \n (%[^\n])
+			 and discard the \n (%*c) */
 		if (sscanf (line, "%[a-zA-Z0-9] %[^\n]%*c", optname, value) > 0) {
 			struct option *optscan;
 			for (optscan = options; optscan->name; optscan++) // search tag
@@ -636,7 +641,7 @@ int parsercfile(char *path, struct option *options) {
 				fprintf(stderr,"%s (line %d): parameter error %s\n", path, lineno, optname);
 				errno = EINVAL, retvalue |= -1;
 			} else if (args.argv[index] == NULL) // overwrite only if NULL
-				args.argv[index] = strdup(value);
+				args.argv[index] = *value ? strdup(value) : "";
 		} else {
 			fprintf(stderr,"%s (line %d): syntax error\n", path, lineno);
 			errno = EINVAL, retvalue |= -1;
@@ -711,7 +716,7 @@ int main(int argc, char *argv[])
 								break;
 		}
 	}
-	if (optind < argc)
+	if (argc == 1 || optind < argc)
 		usage(progname);
 
 	if (rcfile && parsercfile(rcfile, long_options) < 0) {
