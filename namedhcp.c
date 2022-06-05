@@ -483,7 +483,7 @@ void main_vde_loop(VDECONN *conn, FILE *fopt, struct iothdns *iothdns) {
 			*outpkt = *inpkt; // copy the headers
 #ifdef PACKETDUMP
 			if (verbose) {
-				fprintf(stderr, "INPACKET %zd\n",inlen);
+				fprintf(stderr, "INPACKET vde %zd\n",inlen);
 				packetdump(stderr, inbuf, inlen);
 			}
 #endif
@@ -495,7 +495,7 @@ void main_vde_loop(VDECONN *conn, FILE *fopt, struct iothdns *iothdns) {
 				fill_outpkt(outpkt, outlen);
 #ifdef PACKETDUMP
 				if (verbose) {
-					fprintf(stderr, "OUTPACKET %zd\n", outlen);
+					fprintf(stderr, "OUTPACKET vde %zd\n", outlen);
 					packetdump(stderr, outbuf, outlen);
 				}
 #endif
@@ -531,7 +531,7 @@ void usage(char *progname)
 	exit(1);
 }
 
-static char *short_options = "hdvnf:p:s:R:i:n:r:m:D:N:S:";
+static char *short_options = "hdvf:p:s:R:i:n:r:m:D:N:S:";
 static struct option long_options[] = {
 	{"help", 0, 0, 'h'},
 	{"daemon", 0, 0, 'd'},
