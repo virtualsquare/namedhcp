@@ -377,14 +377,14 @@ static unsigned int chksum(unsigned int sum, const void *vbuf, size_t len) {
 }
 
 /* select the input packets */
-static int ch_inpkt(struct bootp_pkt *inpkt) {
+static int ck_inpkt(struct bootp_pkt *inpkt) {
 	static uint8_t bcast_ethernet_addr[]={0xff,0xff,0xff,0xff,0xff,0xff};
 	if (! (memcmp(inpkt->ethh.ether_dhost, bcast_ethernet_addr, ETH_ALEN) == 0 ||
 				memcmp(inpkt->ethh.ether_dhost, macaddr, ETH_ALEN) == 0))
 		return 0;
 	if (ntohs(inpkt->ethh.ether_type) != 0x0800) return 0; // this is not IPv4
 	if (inpkt->iph.version != 4) return 0; //this is not IPv4
-	if (inpkt->iph.protocol != 17) return 0; //this is not UDP
+	if (inpkt->iph.protocol != IPPROTO_UDP) return 0; //this is not UDP
 	if (ntohs(inpkt->udph.dest) != DHCP_SERVERPORT) return 0; /* wrong destination port */
 	if (inpkt->bootph.op != BOOTREQUEST) return 0; // Boot req
 	if (inpkt->bootph.op != ARPHRD_ETHER) return 0;
@@ -483,7 +483,7 @@ static ssize_t packet_process(
 		return 0;
 	struct bootp_pkt *inpkt = (void *) inbuf;
 	struct bootp_pkt *outpkt = (void *) outbuf;
-	if (! ch_inpkt(inpkt)) return 0;
+	if (! ck_inpkt(inpkt)) return 0;
 	*outpkt = *inpkt; // copy the headers
 #ifdef PACKETDUMP
 	if (verbose) {

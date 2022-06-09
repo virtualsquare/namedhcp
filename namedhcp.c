@@ -429,7 +429,7 @@ static unsigned int chksum(unsigned int sum, const void *vbuf, size_t len) {
 }
 
 /* select input packets */
-static int ch_inpkt(struct udpv6_pkt *inpkt) {
+static int ck_inpkt(struct udpv6_pkt *inpkt) {
 	/* multicast IPv6 address for DHCP */
 	static uint8_t dhcp_ethernet_addr[]={0x33,0x33,0x00,0x01,0x00,0x02};
 	if (! (memcmp(inpkt->ethh.ether_dhost, dhcp_ethernet_addr, ETH_ALEN) == 0 ||
@@ -438,7 +438,7 @@ static int ch_inpkt(struct udpv6_pkt *inpkt) {
 	if (ntohs(inpkt->ethh.ether_type) != 0x86dd) return 0; // this is not IPv6
 	if (inpkt->ipv6h.ip6_vfc >> 4 != 6) return 0; //this is not IPv6
 	if (! IN6_IS_ADDR_LINKLOCAL(inpkt->ipv6h.ip6_src.s6_addr)) return 0; //this is not Link Local
-	if (inpkt->ipv6h.ip6_nxt != 17) return 0; //this is not UDP
+	if (inpkt->ipv6h.ip6_nxt != IPPROTO_UDP) return 0; //this is not UDP
 	if (ntohs(inpkt->udph.dest) != DHCP_SERVERPORT) return 0; /* wrong destination port */
 	return 1;
 }
@@ -479,7 +479,7 @@ void main_vde_loop(VDECONN *conn, FILE *fopt, struct iothdns *iothdns) {
 		if (inlen >= (ssize_t) sizeof(struct udpv6_pkt)) {
 			struct udpv6_pkt *inpkt = (void *) inbuf;
 			struct udpv6_pkt *outpkt = (void *) outbuf;
-			if (! ch_inpkt(inpkt)) continue;
+			if (! ck_inpkt(inpkt)) continue;
 			*outpkt = *inpkt; // copy the headers
 #ifdef PACKETDUMP
 			if (verbose) {
