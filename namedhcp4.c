@@ -782,7 +782,7 @@ int main(int argc, char *argv[])
 		if (dnsstack == NULL) dnsstack = stack;
 		if (args.iface == NULL) args.iface = "vde0";
 		int fd = open_iface(stack, args.iface);
-		printf("%d\n", fd);
+		//printf("%d\n", fd);
 		if (fd >= 0) {
 			struct iothdns *iothdns = open_iothdns(dnsstack);
 			FILE *fopt = foptcreate(iothdns);

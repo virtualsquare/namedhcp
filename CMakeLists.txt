@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project("namedhcp"
     DESCRIPTION "use DNS to drive dhcp configuration"
-    HOMEPAGE_URL "https://github.com/cirtualsquare/namedhcp"
+    HOMEPAGE_URL "https://github.com/virtualsquare/namedhcp"
     VERSION 0.1.0
     LANGUAGES C)
 
