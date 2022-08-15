@@ -511,11 +511,11 @@ void main_vde_loop(VDECONN *conn, FILE *fopt, struct iothdns *iothdns) {
 void usage(char *progname)
 {
 	fprintf(stderr,"Usage: %s OPTIONS\n"
+			"\t--rcfile|-f <conffile>\n"
 			"\t--stack|-s <ioth_stack_conf> or VNL\n"
 			"\t           (it uses a udpv6 emulation if this is a VDE VNL)\n"
-			"\t--dnsstack|-R <resolver_ioth_stack_conf>)\n"
+			"\t--dnsstack|-R <resolver_ioth_stack_conf>\n"
 			"\t           (default: kernel stack if the --stack is a VNL, the same of --stack otherwise)\n"
-			"\t--rcfile|-f <conffile>\n"
 			"\t--iface|-i <interface>            (only for ioth stack,	default value vde0)\n"
 			"\t--resolvconf|-r <resolvconf_file> (used by this dhcp server, syntax see resolv.conf(5))\n"
 			"\t--nameserver|-n <dns_server_list> (used by this dhcp server)\n"
