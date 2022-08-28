@@ -20,6 +20,8 @@
  *
  */
 
+#define SPDX_LICENSE "SPDX-License-Identifier: GPL-2.0-or-later"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -703,6 +705,8 @@ int main(int argc, char *argv[])
 	/* once here, we're sure we're the true process which will continue as a
 	 * server: save PID file if needed */
 	if(args.pidfile) save_pidfile(args.pidfile, cwd);
+
+	ioth_set_license(SPDX_LICENSE);
 
 	struct ioth *dnsstack = NULL;
 	if (args.dnsstack) {
