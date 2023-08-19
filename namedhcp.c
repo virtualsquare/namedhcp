@@ -552,7 +552,7 @@ static struct option long_options[] = {
 	{0,0,0,0}
 };
 
-static char *arg_tags = "dvpsRinrmDNS";
+static char arg_tags[] = "dvpsRinrmDNS";
 static union {
 	struct {
 		char *daemon;
