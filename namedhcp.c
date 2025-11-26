@@ -214,6 +214,17 @@ static void hashiaid(void *ipaddr, void *iaid) {
 	_iaid[0] = _ipaddr[2] ^ _ipaddr[3];
 }
 
+static void *get_iana_iaid(FILE *fin, long pos, void *buf) {
+	if (pos == 0)
+		return NULL;
+	fseek(fin, pos, SEEK_SET);
+	int len = fget_uint16(fin);
+	if (len < 12)
+		return NULL;
+	fget_data(fin, buf, 4);
+	return buf;
+}
+
 /* IANA stands for ID association for non-temporary address */
 static void add_iana(FILE *f, void *ipaddr, void *iaid) {
 	fput_uint16(f, OPTION_IA_NA);
@@ -281,6 +292,7 @@ ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, struct iothdns *iothdns) {
 			 cmp_option(fin, finpos[OPTION_SERVERID], fopt, foptpos[OPTION_SERVERID]) == 0)) {
 		fseek(fin, finpos[OPTION_CLIENT_FQDN], SEEK_SET);
 		uint16_t fqdn_len = fget_uint16(fin);
+		uint8_t iaid[4];
 		char fqdn[fqdn_len];
 		/* uint8_t fqdn_flags = */ fget_uint8(fin); // unused
 		fget_name(fin, fqdn, fqdn_len);
@@ -292,7 +304,7 @@ ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, struct iothdns *iothdns) {
 					fput_uint8(fout, DHCP_ADVERTISE);
 					fput_data(fout, dhcp_tid, 3);
 					add_client_server_id(fin, fout, fopt, finpos[OPTION_CLIENTID], foptpos[OPTION_SERVERID]);
-					add_iana(fout, ipv6addr, NULL);
+					add_iana(fout, ipv6addr, get_iana_iaid(fin, finpos[OPTION_IA_NA], iaid));
 					copy_option(fin, fout, OPTION_CLIENT_FQDN, finpos[OPTION_CLIENT_FQDN]);
 					add_oro_options(fin, fout, fopt, finpos[OPTION_ORO], foptpos); // add_oro?
 				}
@@ -305,7 +317,7 @@ ssize_t dhcpparse(FILE *fin, FILE *fout, FILE *fopt, struct iothdns *iothdns) {
 				fput_data(fout, dhcp_tid, 3);
 				add_client_server_id(fin, fout, fopt, finpos[OPTION_CLIENTID], foptpos[OPTION_SERVERID]);
 				if (iothdns_lookup_aaaa(iothdns, fqdn, ipv6addr, 1) > 0) { /// missing check iana
-					add_iana(fout, ipv6addr, NULL);
+					add_iana(fout, ipv6addr, get_iana_iaid(fin, finpos[OPTION_IA_NA], iaid));
 					copy_option(fin, fout, OPTION_CLIENT_FQDN, finpos[OPTION_CLIENT_FQDN]);
 					add_oro_options(fin, fout, fopt, finpos[OPTION_ORO], foptpos);
 				} else {
