@@ -156,7 +156,10 @@ The next step consists of starting the namedhcp server:
 $ namedhcp -s "stack=vdestack,vnl=vde:///tmp/hub,ip=fc00::ffff/64,eth" -n fc00::24
 ```
 
-Now the infrastructure is complete and we can start two vdens.
+The infrastructure is complete and we can start two vdens (using 
+[ipconf](https://github.com/virtualsquare/iothconf)).
+
+<!--
 ```
 $ vdens -R fc00::24 /tmp/hub
 $ ip link set vde0 up
@@ -172,6 +175,18 @@ $ ip link set vde0 up
 $ echo 'send fqdn.fqdn "two.test.local";' > two.conf
 $ truncate -s 0 two.leases
 $ /sbin/dhclient -6 -cf two.conf -v vde0 -lf two.leases -pf /dev/null
+```
+-->
+
+```
+$ vdens -R fc00::24 /tmp/hub
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=one.hash.local
+```
+
+ad the other is:
+```
+$ vdens -R fc00::24 /tmp/hub
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=two.hash.local
 ```
 
 Now it is possible to ping one vdens from the other and viceversa.
@@ -230,19 +245,13 @@ iothradvd -s vde:///tmp/hub -P 10 fc00::/64/L/86400/14400
 Start two (or more) vdens:
 ```
 $ vdens -R fc00::24 /tmp/hub
-$ ip link set vde0 up
-$ echo 'send fqdn.fqdn "h1.hash.local";' > h1.conf
-$ truncate -s 0 h1.leases
-$ /sbin/dhclient -6 -cf h1.conf -v vde0 -lf h1.leases -pf /dev/null
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=h1.hash.local
 ```
 
 and
 ```
 $ vdens -R fc00::24 /tmp/hub
-$ ip link set vde0 up
-$ echo 'send fqdn.fqdn "h2.hash.local";' > h2.conf
-$ truncate -s 0 h2.leases
-$ /sbin/dhclient -6 -cf h2.conf -v vde0 -lf h2.leases -pf /dev/null
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=h2.hash.local
 ```
 
 ... Several nodes can be added just by naming them `something.hash.local`. Each node receives its own
