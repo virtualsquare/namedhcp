@@ -180,13 +180,13 @@ $ /sbin/dhclient -6 -cf two.conf -v vde0 -lf two.leases -pf /dev/null
 
 ```
 $ vdens -R fc00::24 /tmp/hub
-$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=one.hash.local
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=one.test.local
 ```
 
 ad the other is:
 ```
 $ vdens -R fc00::24 /tmp/hub
-$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=two.hash.local
+$ ipconf eth; sleep 1; ipconf dhcpv6,fqdn=two.test.local
 ```
 
 Now it is possible to ping one vdens from the other and viceversa.
