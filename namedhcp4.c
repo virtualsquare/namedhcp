@@ -588,6 +588,7 @@ static struct option long_options[] = {
 	{"dns", 1, 0, 'D'},
 	{"ntp", 1, 0, 'N'},
 	{"dnssearch", 1, 0, 'S'},
+	{"serverid", 1, 0, 'S'},
 	{0,0,0,0}
 };
 
@@ -766,7 +767,6 @@ int main(int argc, char *argv[])
 		printlog(LOG_ERR, "missing stack definition");
 		exit(1);
 	}
-	printf("%p\n", args.stack);
 	if (stropt(args.stack, NULL, NULL, NULL) == 2 // 1 arg
 			&& strstr(args.stack, "://")) { // and it has a VNL syntax
 		/* VDE case, + UDP emulation */
