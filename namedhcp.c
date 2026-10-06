@@ -727,6 +727,10 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
+	if (args.stack == NULL) {
+		printlog(LOG_ERR, "missing stack definition");
+		exit(1);
+	}
 	if (args.macaddr) {
 		if (sscanf(args.macaddr, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx\n",
 					macaddr, macaddr + 1, macaddr + 2, macaddr + 3, macaddr + 4, macaddr + 5) < 6) {

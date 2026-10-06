@@ -320,7 +320,7 @@ $ namedhcp4 -s "stack=vdestack,vnl=vde:///tmp/hub,ip=192.168.1.25/24,eth" -n 192
 The infrastructure is complete.
 
 Let us start two `vdens` and configure them just by naming them `one.test.local` and
-`two.test.local`. We need a trick as glibc has the file `/etc/resolv/conf` hardcoded in its source code
+`two.test.local`. We need a trick as glibc has the file `/etc/resolv.conf` hardcoded in its source code
 (see [this comment on VirtualSquare wiki](http://localhost:8008/#!vbetter/vresolvconf.md))
 
 We'll use `udhcpc` provided as a service by busybox, and the following `dhcpscript`:

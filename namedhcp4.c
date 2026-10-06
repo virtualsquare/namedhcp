@@ -762,6 +762,11 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
+	if (args.stack == NULL) {
+		printlog(LOG_ERR, "missing stack definition");
+		exit(1);
+	}
+	printf("%p\n", args.stack);
 	if (stropt(args.stack, NULL, NULL, NULL) == 2 // 1 arg
 			&& strstr(args.stack, "://")) { // and it has a VNL syntax
 		/* VDE case, + UDP emulation */
